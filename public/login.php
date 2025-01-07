@@ -6,17 +6,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
+    // Fetch user from the database
     $sql = "SELECT * FROM users WHERE email = :email";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['email' => $email]);
     $user = $stmt->fetch();
 
+    // Check if the user exists and if the password matches
     if ($user && password_verify($password, $user['password'])) {
+        // Check if the user's account is approved
         if ($user['status'] === 'approved') {
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['role'] = $user['role'];
-            header("Location: index.php");
-            exit;
+            $_SESSION['role'] = $user['role']; // Store user role in session
+
+            // Redirect based on user role
+            if ($user['role'] === 'admin') {
+                header("Location: admin_dashboard.php"); // Admin dashboard
+                exit;
+            } elseif ($user['role'] === 'author') {
+                header("Location: author_dashboard.php"); // Author dashboard
+                exit;
+            } else {
+                header("Location: index.php"); // Regular user or guest
+                exit;
+            }
         } else {
             $error = "Account not approved yet.";
         }

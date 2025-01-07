@@ -84,7 +84,7 @@ CREATE DATABASE blog_system;
 4. **Run the application**:
 
    ```bash
-   php -S localhost:8000 -t public
+   /opt/lampp/bin/php -S localhost:8000 -t public
    ```
 
 5. **Access the application**:
